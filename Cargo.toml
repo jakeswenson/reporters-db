@@ -1,0 +1,17 @@
+[package]
+name = "reporters-db"
+version = "0.0.0"
+edition = "2021"
+license-file = "LICENSE"
+description = "An unoffical port of the freelawproject's database of court reporters."
+readme = "README.rst"
+repository = "https://github.com/jakeswenson/reporters-db"
+
+[dependencies]
+serde = { version = "1", features = ["serde_derive"] }
+chrono = { version = "0.4", features = ["serde"] }
+regex = "1"
+
+serde_json = "1"
+
+[build-dependencies]
