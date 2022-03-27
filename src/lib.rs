@@ -6,11 +6,8 @@ pub mod case_name_part_abbreviations;
 pub mod journals;
 pub mod laws;
 
-mod regexes;
-
-mod utils;
-
-pub use regexes::{regexes, RegexTemplate};
+pub mod regexes;
+pub mod utils;
 
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum Error {
