@@ -1,8 +1,7 @@
 
 
 use std::collections::HashMap;
-use regex::{Captures, Regex};
-use crate::regexes::{RawRegexMap, RegexOrNested, RegexTemplate};
+use crate::regexes::{RawRegexMap, RegexOrNested, RegexTemplate, ResolvedRegex};
 
 fn flatten(map: RawRegexMap) -> HashMap<String, RegexTemplate> {
   map.into_iter()
@@ -29,12 +28,11 @@ Process contents of variables.json, in preparation for passing to recursive_subs
 - Add optional variants for each key, so {"page": "\\d+"} becomes {"page_optional": "(?:\\d+ ?)?"}
 - Resolve nested references
  */
-pub(crate) fn process_variables(map: RawRegexMap) -> HashMap<String, RegexTemplate> {
+pub(crate) fn process_variables(map: RawRegexMap) -> Result<HashMap<String, ResolvedRegex>, super::Error> {
   let variables = flatten(map);
 
-  variables.clone().into_iter().map(|(k, mut v)| {
-    recursive_substitute(&mut v, &variables);
-    (k, v)
+  variables.clone().into_iter().map(|(k, v)| {
+    Ok((k, recursive_substitute(v, &variables)?))
   }).collect()
 }
 
@@ -44,18 +42,13 @@ Recursively substitute values in `template` from `variables`. For example:
         "foo foo foo"
     Infinite loops will raise a ValueError after max_depth loops.
  */
-pub(crate) fn recursive_substitute(template: &mut RegexTemplate, map: &HashMap<String, RegexTemplate>) {
-  let result = Regex::new(r"$(\w+)").unwrap();
-
+pub(crate) fn recursive_substitute(template: RegexTemplate, map: &HashMap<String, RegexTemplate>) -> Result<ResolvedRegex, super::Error> {
   for _ in 0..100 {
-    let new_value = result.replace_all(&template.0, |caps: &Captures| {
-      &map.get(&caps[1]).unwrap().0
-    });
-
-    if new_value != template.0 {
-      break;
+    let new_value = template.resolve(&map);
+    if new_value != template {
+      return Ok(ResolvedRegex::of(new_value.into()));
     }
-
-    template.0 = new_value.to_string();
   }
+
+  Err(super::Error::TooMuchRecursion)
 }

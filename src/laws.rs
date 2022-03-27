@@ -19,23 +19,41 @@ pub enum LawCiteType {
 #[derive(Deserialize, Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
 pub struct LawAbbreviation(String);
 
+impl LawAbbreviation {
+  pub fn value(&self) -> &str {
+    &self.0
+  }
+}
+
 #[derive(Deserialize, Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
 pub struct LawName(String);
+
+impl LawName {
+  pub fn value(&self) -> &str {
+    &self.0
+  }
+}
 
 #[derive(Deserialize, Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
 pub struct Jurisdiction(String);
 
+impl Jurisdiction {
+  pub fn value(&self) -> &str {
+    &self.0
+  }
+}
+
 #[derive(Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct Law {
-  cite_type: LawCiteType,
-  start: Option<NaiveDateTime>,
-  end: Option<NaiveDateTime>,
-  examples: Vec<String>,
-  jurisdiction: Jurisdiction,
-  name: LawName,
-  regexes: Vec<RegexTemplate>,
-  notes: Option<String>,
-  href: Option<String>,
+  pub cite_type: LawCiteType,
+  pub start: Option<NaiveDateTime>,
+  pub end: Option<NaiveDateTime>,
+  pub examples: Vec<String>,
+  pub jurisdiction: Jurisdiction,
+  pub name: LawName,
+  pub regexes: Vec<RegexTemplate>,
+  pub notes: Option<String>,
+  pub href: Option<String>,
 }
 
 pub type LawsMap = HashMap<LawAbbreviation, Vec<Law>>;

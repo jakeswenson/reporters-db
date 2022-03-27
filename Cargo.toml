@@ -11,6 +11,8 @@ repository = "https://github.com/jakeswenson/reporters-db"
 serde = { version = "1", features = ["serde_derive"] }
 chrono = { version = "0.4", features = ["serde"] }
 regex = "1"
+thiserror = "1"
+lazy_static = "1"
 
 serde_json = "1"
 

@@ -12,19 +12,31 @@ pub enum JournalCiteType {
 #[derive(Deserialize, Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
 pub struct JournalAbbreviation(String);
 
+impl JournalAbbreviation {
+  pub fn value(&self) -> &str {
+    &self.0
+  }
+}
+
 #[derive(Deserialize, Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
 pub struct JournalName(String);
 
+impl JournalName {
+  pub fn value(&self) -> &str {
+    &self.0
+  }
+}
+
 #[derive(Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct Journal {
-  cite_type: JournalCiteType,
-  start: Option<NaiveDateTime>,
-  end: Option<NaiveDateTime>,
-  examples: Vec<String>,
-  name: JournalName,
-  regexes: Vec<RegexTemplate>,
-  notes: Option<String>,
-  href: Option<String>,
+  pub cite_type: JournalCiteType,
+  pub start: Option<NaiveDateTime>,
+  pub end: Option<NaiveDateTime>,
+  pub examples: Vec<String>,
+  pub name: JournalName,
+  pub regexes: Vec<RegexTemplate>,
+  pub notes: Option<String>,
+  pub href: Option<String>,
 }
 
 pub type JournalsMap = HashMap<JournalAbbreviation, Vec<Journal>>;
