@@ -1,6 +1,6 @@
 [package]
 name = "reporters-db"
-version = "0.0.0"
+version = "0.0.1"
 edition = "2021"
 license-file = "LICENSE"
 description = "An unoffical port of the freelawproject's database of court reporters."
