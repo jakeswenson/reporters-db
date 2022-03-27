@@ -12,6 +12,10 @@ lazy_static! {
 }
 
 impl RegexTemplate {
+    pub fn of(value: String) -> Self {
+        Self(value)
+    }
+
     pub fn value(&self) -> &str {
         &self.0
     }
@@ -57,7 +61,7 @@ pub enum RegexOrNested {
     Nested(RawRegexMap),
 }
 
-fn raw_regexes() -> RawRegexMap {
+pub fn raw_regexes() -> RawRegexMap {
     let json = include_str!("../reporters_db/data/regexes.json");
     serde_json::from_str(json).expect("Parsing regexes.json should not fail...")
 }
