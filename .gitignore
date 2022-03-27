@@ -54,3 +54,8 @@ docs/_build/
 target/
 
 .idea/
+
+# Added by cargo
+
+/target
+Cargo.lock
