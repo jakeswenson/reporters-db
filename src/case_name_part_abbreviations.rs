@@ -4,8 +4,20 @@ use serde::Deserialize;
 #[derive(Deserialize, Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
 pub struct CaseNamePartAbbreviation(String);
 
+impl CaseNamePartAbbreviation {
+  pub fn value(&self) -> &str {
+    &self.0
+  }
+}
+
 #[derive(Deserialize, Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
 pub struct CaseNamePart(String);
+
+impl CaseNamePart {
+  pub fn value(&self) -> &str {
+    &self.0
+  }
+}
 
 pub type CaseNamePartAbbreviationMap = HashMap<CaseNamePartAbbreviation, Vec<CaseNamePart>>;
 

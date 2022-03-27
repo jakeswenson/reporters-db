@@ -4,8 +4,20 @@ use serde::Deserialize;
 #[derive(Deserialize, Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
 pub struct StateAbbreviation(String);
 
+impl StateAbbreviation {
+  pub fn value(&self) -> &str {
+    &self.0
+  }
+}
+
 #[derive(Deserialize, Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
 pub struct StateName(String);
+
+impl StateName {
+  pub fn value(&self) -> &str {
+    &self.0
+  }
+}
 
 pub type StateAbbreviationMap = HashMap<StateAbbreviation, StateName>;
 
