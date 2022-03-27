@@ -27,9 +27,7 @@ Process contents of variables.json, in preparation for passing to recursive_subs
 - Add optional variants for each key, so {"page": "\\d+"} becomes {"page_optional": "(?:\\d+ ?)?"}
 - Resolve nested references
  */
-pub(crate) fn process_variables(
-    map: RawRegexMap,
-) -> Result<HashMap<String, ResolvedRegex>, super::Error> {
+pub fn process_variables(map: RawRegexMap) -> Result<HashMap<String, ResolvedRegex>, super::Error> {
     let variables = flatten(map);
 
     variables
@@ -45,7 +43,7 @@ Recursively substitute values in `template` from `variables`. For example:
         "foo foo foo"
     Infinite loops will raise a ValueError after max_depth loops.
  */
-pub(crate) fn recursive_substitute(
+pub fn recursive_substitute(
     template: RegexTemplate,
     map: &HashMap<String, RegexTemplate>,
 ) -> Result<ResolvedRegex, super::Error> {

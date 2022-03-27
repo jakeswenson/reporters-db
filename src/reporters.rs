@@ -29,8 +29,7 @@ impl EditionName {
 pub struct Edition {
     pub end: Option<NaiveDateTime>,
     pub start: Option<NaiveDateTime>,
-    #[serde(default)]
-    pub regexes: Vec<RegexTemplate>,
+    pub regexes: Option<Vec<RegexTemplate>>,
 }
 
 #[derive(Deserialize, Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
