@@ -1,4 +1,4 @@
-use crate::RegexTemplate;
+use crate::regexes::RegexTemplate;
 pub use chrono::NaiveDateTime;
 use serde::Deserialize;
 use std::collections::HashMap;
