@@ -8,12 +8,12 @@ use std::collections::HashMap;
 pub struct RegexTemplate(String);
 
 lazy_static! {
-    static ref RESOLVER: regex::Regex = regex::Regex::new(r"$(\w+)").unwrap();
+    static ref RESOLVER: regex::Regex = regex::Regex::new(r"\$(\w+)").unwrap();
 }
 
 impl RegexTemplate {
-    pub fn of(value: String) -> Self {
-        Self(value)
+    pub fn of<T: Into<String>>(value: T) -> Self {
+        Self(value.into())
     }
 
     pub fn value(&self) -> &str {
@@ -24,12 +24,35 @@ impl RegexTemplate {
         let new_value = RESOLVER.replace_all(&self.0, |caps: &Captures| {
             let template = values
                 .get(&caps[1])
-                .expect("Unable to resolve regex template replacement value");
+                .map(|t| t.0.as_str())
+                .unwrap_or(&caps[0]);
 
-            &template.0
+            template.to_string()
         });
 
         Self(new_value.to_string())
+    }
+
+    pub fn resolved(self) -> Result<ResolvedRegex, UnresolvedRegex> {
+        if RESOLVER.is_match(&self.0) {
+            Err(UnresolvedRegex(self))
+        } else {
+            Ok(ResolvedRegex::of(self.0))
+        }
+    }
+}
+
+#[derive(Debug, Clone, Hash, Eq, PartialEq, thiserror::Error)]
+#[error("Unresolved regex: {0:?}")]
+pub struct UnresolvedRegex(RegexTemplate);
+
+impl UnresolvedRegex {
+    pub fn template(self) -> RegexTemplate {
+        self.0
+    }
+
+    pub fn template_ref(&self) -> &RegexTemplate {
+        &self.0
     }
 }
 
@@ -43,7 +66,7 @@ impl From<RegexTemplate> for String {
 pub struct ResolvedRegex(String);
 
 impl ResolvedRegex {
-    pub(crate) fn of(value: String) -> Self {
+    pub fn of(value: String) -> Self {
         Self(value)
     }
 
@@ -61,21 +84,44 @@ pub enum RegexOrNested {
     Nested(RawRegexMap),
 }
 
+impl RegexOrNested {
+    pub fn add<T: Into<String>>(&mut self, key: T, value: RegexTemplate) {
+        match self {
+            RegexOrNested::Nested(map) => {
+                map.insert(key.into(), RegexOrNested::Regex(value));
+            }
+            RegexOrNested::Regex(_) => panic!("Can't added a regex to a non nested namespace"),
+        }
+    }
+}
+
 pub fn raw_regexes() -> RawRegexMap {
     let json = include_str!("../reporters_db/data/regexes.json");
     serde_json::from_str(json).expect("Parsing regexes.json should not fail...")
 }
 
-pub fn regexes() -> HashMap<String, ResolvedRegex> {
-    crate::utils::process_variables(raw_regexes()).expect("Failed to resolve regexs")
+pub fn regexes() -> HashMap<String, RegexTemplate> {
+    crate::utils::process_variables(raw_regexes())
 }
 
 #[cfg(test)]
 mod tests {
     use super::regexes;
+    use crate::regexes::RegexTemplate;
 
     #[test]
     fn parse_regexes() {
         dbg!(regexes());
+    }
+
+    #[test]
+    fn resolve_regex() {
+        let template = RegexTemplate::of("$edition").resolve(
+            &vec![("edition".into(), RegexTemplate::of("foo"))]
+                .into_iter()
+                .collect(),
+        );
+
+        assert_eq!(template, RegexTemplate::of("foo"));
     }
 }

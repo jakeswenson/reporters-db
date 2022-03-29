@@ -1,3 +1,5 @@
+use regexes::UnresolvedRegex;
+
 pub mod reporters;
 pub mod state_abbreviations;
 
@@ -12,5 +14,5 @@ pub mod utils;
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum Error {
     #[error("Failed to resolve regex because there was too much recursion in the templates")]
-    TooMuchRecursion,
+    TooMuchRecursion(#[from] UnresolvedRegex),
 }
