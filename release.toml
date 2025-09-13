@@ -1,0 +1,28 @@
+publish = false
+sign-commit = true
+sign-tag = true
+push = true
+allow-branch = ["oxide", "main"]
+pre-release-commit-message = "chore: Release {{crate_name}} version {{version}}"
+#post-release-commit-message = "chore: Start next development iteration"
+tag-message = "Release {{crate_name}} v{{version}}"
+tag-name = "v{{version}}"
+
+[[pre-release-replacements]]
+file = "CHANGELOG.md"
+search = "## \\[Unreleased\\]"
+replace = """
+## [Unreleased]
+
+## [{{version}}] - {{date}}"""
+exactly = 1
+
+[[pre-release-replacements]]
+file = "CHANGELOG.md"
+search = "\\[Unreleased\\]: https://github\\.com/jakeswenson/reporters-db/compare/v(?:\\d+\\.\\d+\\.\\d+)\\.\\.\\.HEAD"
+replace = """
+[Unreleased]: https://github.com/jakeswenson/reporters-db/compare/v{{version}}...HEAD
+[{{version}}]: https://github.com/jakeswenson/reporters-db/compare/v{{prev_version}}...v{{version}}"""
+exactly = 1
+
+
