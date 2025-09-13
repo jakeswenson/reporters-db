@@ -9,6 +9,8 @@ This is the changelog for the Rust port of the reporters-db library. This port m
 
 ## [Unreleased]
 
+## [0.1.0] - 2025-09-13
+
 ### Added
 - **Complete PHF Modernization**: Zero runtime overhead through compile-time Perfect Hash Function data structures
 - **Comprehensive Test Suite**: 28 unit tests covering data integrity and validation
@@ -69,7 +71,8 @@ This is the changelog for the Rust port of the reporters-db library. This port m
 ### Added
 - Project initialization
 
-[Unreleased]: https://github.com/jakeswenson/reporters-db/compare/v0.0.5...HEAD
+[Unreleased]: https://github.com/jakeswenson/reporters-db/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/jakeswenson/reporters-db/compare/v0.0.5...v0.1.0
 [0.0.5]: https://github.com/jakeswenson/reporters-db/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/jakeswenson/reporters-db/releases/tag/v0.0.4
 [0.0.3]: https://github.com/jakeswenson/reporters-db/releases/tag/v0.0.3
