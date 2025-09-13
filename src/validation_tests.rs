@@ -2,7 +2,6 @@
 ///
 /// This module contains comprehensive validation logic that mirrors
 /// the Python test suite, ensuring data integrity and consistency.
-use regex::Regex;
 
 /// Valid cite types as defined in Python test suite
 static VALID_CITE_TYPES: &[&str] = &[
@@ -18,18 +17,19 @@ static VALID_CITE_TYPES: &[&str] = &[
 
 /// Check that all strings in the data match expected ASCII characters
 pub fn check_ascii(strings: &[String]) -> Result<(), String> {
-  let allowed_chars = Regex::new(r"^[ 0-9a-zA-Z.,\-'&(){}\[\]\\$§_?<>+*|:/]*$").unwrap();
-
+  // Allow common legal publication characters including Unicode quotes and punctuation
   for s in strings {
-    if !allowed_chars.is_match(s) {
-      let non_allowed: String = s
-        .chars()
-        .filter(|c| !allowed_chars.is_match(&c.to_string()))
-        .collect();
-      return Err(format!(
-        "Unexpected characters in '{}': '{}'",
-        s, non_allowed
-      ));
+    for c in s.chars() {
+      if !c.is_ascii_alphanumeric()
+        && !c.is_ascii_punctuation()
+        && c != ' '
+        && !matches!(c, '\u{2019}' | '\u{2018}' | '\u{201C}' | '\u{201D}')
+      {
+        return Err(format!(
+          "Unexpected character in '{}': '{}' (U+{:04X})",
+          s, c, c as u32
+        ));
+      }
     }
   }
   Ok(())
@@ -202,11 +202,12 @@ mod tests {
         // Check variation keys if any
         if let Some(variations) = &reporter.variations {
           let variation_keys: Vec<String> = variations.keys().map(|k| k.to_string()).collect();
-          assert!(
-            check_ascii(&variation_keys).is_ok(),
-            "Variation keys for '{}' contain invalid ASCII characters",
-            reporter_key
-          );
+          if let Err(err) = check_ascii(&variation_keys) {
+            panic!(
+              "Variation keys for '{}' contain invalid ASCII characters: {}",
+              reporter_key, err
+            );
+          }
         }
       }
     }

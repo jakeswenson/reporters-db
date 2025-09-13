@@ -82,12 +82,28 @@ fn generate_reporters(file: &mut BufWriter<File>) {
   // First, generate all the edition maps
   let mut edition_map_names = Vec::new();
   let mut variation_map_names = Vec::new();
+  let mut edition_counters = std::collections::HashMap::new();
+  let mut variation_counters = std::collections::HashMap::new();
 
   for (key, reporter_list) in &reporters {
-    for (idx, reporter) in reporter_list.iter().enumerate() {
+    for reporter in reporter_list.iter() {
       let sanitized_key = sanitize_identifier(key);
-      let editions_map_name = format!("EDITIONS_{}_{}", sanitized_key, idx);
-      let variations_map_name = format!("VARIATIONS_{}_{}", sanitized_key, idx);
+
+      // Generate unique editions map name
+      let base_editions_name = format!("EDITIONS_{}", sanitized_key);
+      let editions_counter = edition_counters
+        .entry(base_editions_name.clone())
+        .or_insert(0);
+      let editions_map_name = format!("{}_{}", base_editions_name, editions_counter);
+      *editions_counter += 1;
+
+      // Generate unique variations map name
+      let base_variations_name = format!("VARIATIONS_{}", sanitized_key);
+      let variations_counter = variation_counters
+        .entry(base_variations_name.clone())
+        .or_insert(0);
+      let variations_map_name = format!("{}_{}", base_variations_name, variations_counter);
+      *variations_counter += 1;
 
       // Generate editions map
       writeln!(file, "#[allow(non_upper_case_globals)]").unwrap();
@@ -323,9 +339,17 @@ fn generate_reporters(file: &mut BufWriter<File>) {
   // Generate reporter arrays
   let mut reporter_arrays = Vec::new();
   let mut edition_idx = 0;
+  let mut name_counters = std::collections::HashMap::new();
 
   for (key, reporter_list) in &reporters {
-    let array_name = format!("REPORTERS_{}", sanitize_identifier(key));
+    let base_name = sanitize_identifier(key);
+    let counter = name_counters.entry(base_name.clone()).or_insert(0);
+    let array_name = if *counter == 0 {
+      format!("REPORTERS_{}", base_name)
+    } else {
+      format!("REPORTERS_{}_{}", base_name, counter)
+    };
+    *counter += 1;
 
     writeln!(file, "#[allow(non_upper_case_globals)]").unwrap();
     writeln!(file, "static {}: &[Reporter] = &[", array_name).unwrap();
