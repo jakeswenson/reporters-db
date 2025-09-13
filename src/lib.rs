@@ -415,7 +415,7 @@ mod tests {
       let found_reporter = reporters
         .values()
         .flat_map(|reporter_list| reporter_list.iter())
-        .any(|reporter| &reporter.name == name);
+        .any(|reporter| reporter.name == name);
 
       assert!(
         found_reporter,

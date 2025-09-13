@@ -2,7 +2,6 @@
 ///
 /// This module contains comprehensive validation logic that mirrors
 /// the Python test suite, ensuring data integrity and consistency.
-
 /// Valid cite types as defined in Python test suite
 static VALID_CITE_TYPES: &[&str] = &[
   "federal",
@@ -57,26 +56,26 @@ pub fn check_dates(
   start: Option<&str>,
   end: Option<&str>,
 ) -> Result<(), String> {
-  if let Some(start_str) = start {
-    if start_str.len() < 10 || !start_str.contains('-') {
-      return Err(format!("Invalid start date format: '{}'", start_str));
-    }
+  if let Some(start_str) = start
+    && (start_str.len() < 10 || !start_str.contains('-'))
+  {
+    return Err(format!("Invalid start date format: '{}'", start_str));
   }
 
-  if let Some(end_str) = end {
-    if end_str.len() < 10 || !end_str.contains('-') {
-      return Err(format!("Invalid end date format: '{}'", end_str));
-    }
+  if let Some(end_str) = end
+    && (end_str.len() < 10 || !end_str.contains('-'))
+  {
+    return Err(format!("Invalid end date format: '{}'", end_str));
   }
 
   // Basic chronological check - start should come before end
-  if let (Some(start_str), Some(end_str)) = (start, end) {
-    if start_str > end_str {
-      return Err(format!(
-        "Start date '{}' is after end date '{}'",
-        start_str, end_str
-      ));
-    }
+  if let (Some(start_str), Some(end_str)) = (start, end)
+    && start_str > end_str
+  {
+    return Err(format!(
+      "Start date '{}' is after end date '{}'",
+      start_str, end_str
+    ));
   }
 
   Ok(())
@@ -275,7 +274,7 @@ mod tests {
       let found = reporters
         .values()
         .flat_map(|list| list.iter())
-        .any(|reporter| &reporter.name == name);
+        .any(|reporter| reporter.name == name);
 
       assert!(
         found,
@@ -294,7 +293,7 @@ mod tests {
     let mut valid_mappings = 0;
     let mut total_mappings = 0;
 
-    for (_variation, canonical_list) in variations {
+    for canonical_list in variations.values() {
       for canonical in canonical_list {
         total_mappings += 1;
         if reporters.contains_key(canonical) {
@@ -385,25 +384,25 @@ mod tests {
       let reporter = reporters
         .values()
         .flat_map(|list| list.iter())
-        .find(|r| &r.name == name);
+        .find(|r| r.name == name);
 
       if let Some(reporter) = reporter {
         let mut prev_date: Option<&str> = None;
 
         for edition_key in edition_list {
-          if let Some(edition) = reporter.editions.get(edition_key.as_str()) {
-            if let Some(start_date) = edition.start {
-              if let Some(prev) = prev_date {
-                assert!(
-                  start_date >= prev,
-                  "Editions for '{}' are not sorted by start date: '{}' comes after '{}'",
-                  name,
-                  start_date,
-                  prev
-                );
-              }
-              prev_date = Some(start_date);
+          if let Some(edition) = reporter.editions.get(edition_key.as_str())
+            && let Some(start_date) = edition.start
+          {
+            if let Some(prev) = prev_date {
+              assert!(
+                start_date >= prev,
+                "Editions for '{}' are not sorted by start date: '{}' comes after '{}'",
+                name,
+                start_date,
+                prev
+              );
             }
+            prev_date = Some(start_date);
           }
         }
       }

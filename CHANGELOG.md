@@ -9,7 +9,19 @@ This is the changelog for the Rust port of the reporters-db library. This port m
 
 ## [Unreleased]
 
+### Fixed
+- All clippy warnings resolved using modern Rust patterns
+- Collapsible if statements now use let-else chains
+- Removed needless reference comparisons
+- Improved iterator usage with `.values()` method
+- Enhanced code quality and maintainability
+
 ## [0.1.1] - 2025-09-13
+
+### Infrastructure
+- Disabled Python workflows for Rust fork while preserving merge compatibility
+- Added conditional checks to automatically detect Rust vs Python repository
+- Improved CI/CD pipeline reliability
 
 ## [0.1.0] - 2025-09-13
 

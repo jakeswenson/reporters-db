@@ -9,8 +9,8 @@ jobs:
   Check-Changelog:
     name: Check Changelog Action
     runs-on: ubuntu-latest
-    # Skip Python tests if this is a Rust fork (has Cargo.toml)
-    if: ${{ !hashFiles('Cargo.toml') }}
+    # Skip changelog check in Rust fork
+    if: false
     steps:
       - uses: tarides/changelog-check-action@v3
         with:

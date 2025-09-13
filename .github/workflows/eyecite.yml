@@ -6,8 +6,8 @@ on:
 jobs:
   repo-dispatch:
     runs-on: ubuntu-latest
-    # Skip Python tests if this is a Rust fork (has Cargo.toml)
-    if: ${{ !hashFiles('Cargo.toml') }}
+    # Skip eyecite dispatch in Rust fork
+    if: false
     steps:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v3

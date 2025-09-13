@@ -8,8 +8,8 @@ jobs:
   semgrep:
     name: Scan
     runs-on: ubuntu-latest
-    # Skip Python tests if this is a Rust fork (has Cargo.toml)
-    if: ${{ !hashFiles('Cargo.toml') }}
+    # Skip semgrep scan in Rust fork
+    if: false
     steps:
     - uses: actions/checkout@v4
     - uses: returntocorp/semgrep-action@v1
