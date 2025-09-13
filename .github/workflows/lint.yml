@@ -13,6 +13,8 @@ concurrency:
 jobs:
   black:
     runs-on: ubuntu-latest
+    # Skip Python lint if this is a Rust fork (has Cargo.toml)
+    if: ${{ !hashFiles('Cargo.toml') }}
     steps:
       - uses: actions/checkout@v4
 

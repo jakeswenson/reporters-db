@@ -13,6 +13,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Skip Python tests if this is a Rust fork (has Cargo.toml)
+    if: ${{ !hashFiles('Cargo.toml') }}
     strategy:
       matrix:
         python-version:
