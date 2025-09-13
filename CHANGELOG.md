@@ -9,6 +9,8 @@ This is the changelog for the Rust port of the reporters-db library. This port m
 
 ## [Unreleased]
 
+## [0.1.4] - 2025-09-13
+
 ### Infrastructure
 - Improved GitHub Actions release workflow security
 - Added 'release' environment to publish job for better secret management
@@ -99,7 +101,8 @@ This is the changelog for the Rust port of the reporters-db library. This port m
 ### Added
 - Project initialization
 
-[Unreleased]: https://github.com/jakeswenson/reporters-db/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/jakeswenson/reporters-db/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/jakeswenson/reporters-db/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/jakeswenson/reporters-db/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/jakeswenson/reporters-db/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/jakeswenson/reporters-db/compare/v0.1.0...v0.1.1
