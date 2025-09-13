@@ -20,7 +20,7 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-reporters-db = "0.0.5"
+reporters-db = "0.1.5"
 ```
 
 ### Basic Usage
