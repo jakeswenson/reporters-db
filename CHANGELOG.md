@@ -9,6 +9,8 @@ This is the changelog for the Rust port of the reporters-db library. This port m
 
 ## [Unreleased]
 
+## [0.1.3] - 2025-09-13
+
 ### Fixed
 - GitHub Actions workflow validation errors using invalid hashFiles() function
 - Replaced unsupported hashFiles() with explicit if: false conditions
@@ -92,7 +94,8 @@ This is the changelog for the Rust port of the reporters-db library. This port m
 ### Added
 - Project initialization
 
-[Unreleased]: https://github.com/jakeswenson/reporters-db/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/jakeswenson/reporters-db/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/jakeswenson/reporters-db/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/jakeswenson/reporters-db/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/jakeswenson/reporters-db/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/jakeswenson/reporters-db/compare/v0.0.5...v0.1.0
