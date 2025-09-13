@@ -9,6 +9,8 @@ This is the changelog for the Rust port of the reporters-db library. This port m
 
 ## [Unreleased]
 
+## [0.1.2] - 2025-09-13
+
 ### Fixed
 - All clippy warnings resolved using modern Rust patterns
 - Collapsible if statements now use let-else chains
@@ -85,7 +87,8 @@ This is the changelog for the Rust port of the reporters-db library. This port m
 ### Added
 - Project initialization
 
-[Unreleased]: https://github.com/jakeswenson/reporters-db/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/jakeswenson/reporters-db/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/jakeswenson/reporters-db/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/jakeswenson/reporters-db/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/jakeswenson/reporters-db/compare/v0.0.5...v0.1.0
 [0.0.5]: https://github.com/jakeswenson/reporters-db/compare/v0.0.4...v0.0.5
