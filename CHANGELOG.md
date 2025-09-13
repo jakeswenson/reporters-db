@@ -9,6 +9,11 @@ This is the changelog for the Rust port of the reporters-db library. This port m
 
 ## [Unreleased]
 
+### Fixed
+- GitHub Actions workflow validation errors using invalid hashFiles() function
+- Replaced unsupported hashFiles() with explicit if: false conditions
+- All Python workflows now properly skip in Rust fork
+
 ## [0.1.2] - 2025-09-13
 
 ### Fixed

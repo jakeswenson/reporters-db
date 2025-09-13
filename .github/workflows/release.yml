@@ -94,9 +94,7 @@ jobs:
         uses: Swatinem/rust-cache@v2.8.0
 
       - name: Publish to crates.io
-        run: cargo publish
-        env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
   finalize_release:
     name: Finalize Release
