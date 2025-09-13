@@ -1,37 +1,37 @@
-use serde::Deserialize;
-use std::collections::HashMap;
+// Type alias for compatibility
+pub type StateAbbreviationMap = phf::Map<&'static str, &'static str>;
 
-#[derive(Deserialize, Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
-pub struct StateAbbreviation(String);
+// Compatibility struct wrappers for existing API
+#[derive(Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
+pub struct StateAbbreviation(pub String);
 
 impl StateAbbreviation {
-    pub fn value(&self) -> &str {
-        &self.0
-    }
+  pub fn value(&self) -> &str {
+    &self.0
+  }
 }
 
-#[derive(Deserialize, Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
-pub struct StateName(String);
+#[derive(Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
+pub struct StateName(pub String);
 
 impl StateName {
-    pub fn value(&self) -> &str {
-        &self.0
-    }
+  pub fn value(&self) -> &str {
+    &self.0
+  }
 }
 
-pub type StateAbbreviationMap = HashMap<StateAbbreviation, StateName>;
-
-pub fn state_abbreviations() -> StateAbbreviationMap {
-    let json = include_str!("../reporters_db/data/state_abbreviations.json");
-    serde_json::from_str(json).expect("Parsing state_abbreviations.json should not fail...")
+// Function to return the static STATE_ABBREVIATIONS map
+pub fn state_abbreviations() -> &'static StateAbbreviationMap {
+  &crate::reporters::STATE_ABBREVIATIONS
 }
 
 #[cfg(test)]
 mod tests {
-    use super::state_abbreviations;
+  use super::state_abbreviations;
 
-    #[test]
-    fn parse_state_abbreviations() {
-        dbg!(state_abbreviations());
-    }
+  #[test]
+  fn parse_state_abbreviations() {
+    let abbreviations = state_abbreviations();
+    assert!(!abbreviations.is_empty());
+  }
 }

@@ -1,57 +1,44 @@
-use crate::regexes::RegexTemplate;
-pub use chrono::NaiveDateTime;
-use serde::Deserialize;
-use std::collections::HashMap;
+// Re-use the Journal type from generated code
+pub use crate::reporters::Journal;
 
-#[derive(Deserialize, Debug, Clone, Copy, Hash, Ord, PartialOrd, Eq, PartialEq)]
-#[serde(rename_all = "snake_case")]
-pub enum JournalCiteType {
-    Journal,
-}
+// Type alias for compatibility
+pub type JournalsMap = phf::Map<&'static str, &'static [Journal]>;
 
-#[derive(Deserialize, Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
-pub struct JournalAbbreviation(String);
+// Compatibility struct wrappers for existing API
+#[derive(Debug, Clone, Copy, Hash, Ord, PartialOrd, Eq, PartialEq)]
+#[repr(transparent)]
+pub struct JournalCiteType(&'static str);
+
+#[derive(Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
+pub struct JournalAbbreviation(pub String);
 
 impl JournalAbbreviation {
-    pub fn value(&self) -> &str {
-        &self.0
-    }
+  pub fn value(&self) -> &str {
+    &self.0
+  }
 }
 
-#[derive(Deserialize, Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
-pub struct JournalName(String);
+#[derive(Debug, Clone, Hash, Ord, PartialOrd, Eq, PartialEq)]
+pub struct JournalName(pub String);
 
 impl JournalName {
-    pub fn value(&self) -> &str {
-        &self.0
-    }
+  pub fn value(&self) -> &str {
+    &self.0
+  }
 }
 
-#[derive(Deserialize, Debug, Clone, Eq, PartialEq)]
-pub struct Journal {
-    pub cite_type: JournalCiteType,
-    pub start: Option<NaiveDateTime>,
-    pub end: Option<NaiveDateTime>,
-    pub examples: Vec<String>,
-    pub name: JournalName,
-    pub regexes: Vec<RegexTemplate>,
-    pub notes: Option<String>,
-    pub href: Option<String>,
-}
-
-pub type JournalsMap = HashMap<JournalAbbreviation, Vec<Journal>>;
-
-pub fn journals() -> JournalsMap {
-    let json = include_str!("../reporters_db/data/journals.json");
-    serde_json::from_str(json).expect("Parsing journals.json should not fail...")
+// Function to return the static JOURNALS map
+pub fn journals() -> &'static JournalsMap {
+  &crate::reporters::JOURNALS
 }
 
 #[cfg(test)]
 mod tests {
-    use super::journals;
+  use super::journals;
 
-    #[test]
-    fn parse_journals() {
-        dbg!(journals());
-    }
+  #[test]
+  fn parse_journals() {
+    let journals = journals();
+    assert!(!journals.is_empty());
+  }
 }
