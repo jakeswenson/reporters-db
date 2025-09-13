@@ -9,6 +9,11 @@ This is the changelog for the Rust port of the reporters-db library. This port m
 
 ## [Unreleased]
 
+### Infrastructure
+- Improved GitHub Actions release workflow security
+- Added 'release' environment to publish job for better secret management
+- Changed cargo registry token to use environment variable instead of CLI flag
+
 ## [0.1.3] - 2025-09-13
 
 ### Fixed
