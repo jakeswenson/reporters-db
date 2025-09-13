@@ -1,11 +1,55 @@
+//! # Reporters Database
+//!
+//! A Rust port of the Free Law Project's database of court reporters with zero runtime overhead.
+//!
+//! This library provides access to a comprehensive database of legal court reporters,
+//! including their variations, editions, and citation formats. All data is embedded
+//! at compile time using Perfect Hash Functions (PHF) for optimal performance.
+//!
+//! ## Quick Start
+//!
+//! ```rust
+//! use reporters_db::{get_reporters, get_variations_only};
+//!
+//! // Get the main reporters database
+//! let reporters = get_reporters();
+//! if let Some(reporter_list) = reporters.get("A.2d") {
+//!     println!("Found {} reporters for 'A.2d'", reporter_list.len());
+//! }
+//!
+//! // Get variation mappings
+//! let variations = get_variations_only();
+//! if let Some(canonical_forms) = variations.get("Atlantic Reporter") {
+//!     println!("Canonical forms: {:?}", canonical_forms);
+//! }
+//! ```
+//!
+//! ## Main API Functions
+//!
+//! - [`get_reporters()`] - Main reporters database
+//! - [`get_variations_only()`] - Variation to canonical mappings
+//! - [`get_editions()`] - Edition to reporter mappings
+//! - [`get_names_to_editions()`] - Reporter names to edition abbreviations
+//! - [`get_regex_variables()`] - Processed regex templates for citation parsing
+//!
+//! ## Performance
+//!
+//! This library uses compile-time Perfect Hash Functions (PHF) for all data access,
+//! providing O(1) lookups with zero runtime overhead. All data is validated and
+//! embedded during compilation.
+
+#![deny(clippy::wildcard_imports)]
+
 use std::collections::HashMap;
 
 pub mod case_name_part_abbreviations;
+pub(crate) mod generated;
 pub mod journals;
 pub mod laws;
 pub mod regexes;
 pub mod reporters;
 pub mod state_abbreviations;
+pub mod types;
 pub mod utils;
 
 #[cfg(test)]
@@ -27,69 +71,233 @@ pub enum Error {
 
 // Public API functions that mirror the Python interface
 
-/// Get the main reporters database
+/// Get the main reporters database containing legal court reporters and their metadata.
+///
+/// Returns a map from reporter abbreviation keys to lists of [`Reporter`] structs.
+/// Each reporter contains information about editions, variations, jurisdictions, and citation types.
+///
+/// # Examples
+///
+/// ```rust
+/// use reporters_db::get_reporters;
+///
+/// let reporters = get_reporters();
+///
+/// // Look up a specific reporter abbreviation
+/// if let Some(reporter_list) = reporters.get("F.3d") {
+///     for reporter in reporter_list.iter() {
+///         println!("Reporter: {}", reporter.name);
+///         println!("Cite type: {:?}", reporter.cite_type);
+///         println!("Editions: {:?}", reporter.editions.keys().collect::<Vec<_>>());
+///     }
+/// }
+/// ```
 pub fn get_reporters() -> &'static ReportersMap {
   reporters::reporters()
 }
 
-/// Get state abbreviations mapping
+/// Get state abbreviations mapping for US states.
+///
+/// Returns a map from state names to their common abbreviations used in legal citations.
+///
+/// # Examples
+///
+/// ```rust
+/// use reporters_db::get_state_abbreviations;
+///
+/// let abbreviations = get_state_abbreviations();
+/// if let Some(abbrev) = abbreviations.get("California") {
+///     println!("California abbreviation: {}", abbrev);
+/// }
+/// ```
 pub fn get_state_abbreviations() -> &'static StateAbbreviationMap {
   state_abbreviations::state_abbreviations()
 }
 
-/// Get case name part abbreviations mapping
+/// Get case name part abbreviations used in legal case names.
+///
+/// Returns a map from full terms to their abbreviated forms commonly used in case titles.
+///
+/// # Examples
+///
+/// ```rust
+/// use reporters_db::get_case_name_abbreviations;
+///
+/// let abbreviations = get_case_name_abbreviations();
+/// if let Some(abbrevs) = abbreviations.get("Corporation") {
+///     println!("Corporation abbreviations: {:?}", abbrevs);
+/// }
+/// ```
 pub fn get_case_name_abbreviations() -> &'static CaseNamePartAbbreviationMap {
   case_name_part_abbreviations::case_name_part_abbreviations()
 }
 
-/// Get journals database
+/// Get the legal journals database.
+///
+/// Returns a map from journal abbreviation keys to lists of [`Journal`] structs.
+///
+/// # Examples
+///
+/// ```rust
+/// use reporters_db::get_journals;
+///
+/// let journals = get_journals();
+/// for (key, journal_list) in journals.entries().take(3) {
+///     println!("Journal key: {}, count: {}", key, journal_list.len());
+/// }
+/// ```
 pub fn get_journals() -> &'static JournalsMap {
   journals::journals()
 }
 
-/// Get laws database
+/// Get the laws database for statute citations.
+///
+/// Returns a map from law abbreviation keys to lists of [`Law`] structs.
+///
+/// # Examples
+///
+/// ```rust
+/// use reporters_db::get_laws;
+///
+/// let laws = get_laws();
+/// for (key, law_list) in laws.entries().take(3) {
+///     println!("Law key: {}, count: {}", key, law_list.len());
+/// }
+/// ```
 pub fn get_laws() -> &'static LawsMap {
   laws::laws()
 }
 
-/// Get processed regex variables
+/// Get processed regex variables for citation pattern matching.
+///
+/// Returns a map from variable names to [`RegexTemplate`] values that can be used
+/// for parsing legal citations. These templates support variable substitution.
+///
+/// # Examples
+///
+/// ```rust
+/// use reporters_db::get_regex_variables;
+///
+/// let regex_vars = get_regex_variables();
+/// if let Some(template) = regex_vars.get("full_cite") {
+///     println!("Full cite pattern: {}", template.value());
+/// }
+/// ```
 pub fn get_regex_variables() -> HashMap<String, RegexTemplate> {
   regexes::regexes()
 }
 
 // Convenience functions that mirror Python's pre-computed data structures
 
-/// Get variations mapping (maps variations to list of canonical reporters)
+/// Get variations mapping that maps variation names to canonical reporter abbreviations.
 ///
-/// Equivalent to Python's VARIATIONS_ONLY
+/// This provides a direct lookup from common variations and alternate names
+/// to their canonical reporter abbreviations.
+///
+/// # Examples
+///
+/// ```rust
+/// use reporters_db::get_variations_only;
+///
+/// let variations = get_variations_only();
+///
+/// // Look up variations for a reporter name
+/// if let Some(canonical_forms) = variations.get("Atlantic Reporter") {
+///     println!("Atlantic Reporter canonical forms: {:?}", canonical_forms);
+///     // Might print: ["A.", "A.2d", "A.3d"]
+/// }
+///
+/// // Find what "F.3d" maps to
+/// if let Some(forms) = variations.get("F.3d") {
+///     println!("F.3d canonical forms: {:?}", forms);
+/// }
+/// ```
 pub fn get_variations_only() -> &'static HashMap<String, Vec<String>> {
   utils::get_variations_only()
 }
 
-/// Get editions mapping (maps edition keys to their root reporter name)
+/// Get editions mapping that maps edition keys to their root reporter name.
 ///
-/// Equivalent to Python's EDITIONS
+/// This provides a reverse lookup from edition abbreviations to the reporter
+/// that contains them.
+///
+/// # Examples
+///
+/// ```rust
+/// use reporters_db::get_editions;
+///
+/// let editions = get_editions();
+///
+/// // Look up which reporter contains "F.3d"
+/// if let Some(reporter_name) = editions.get("F.3d") {
+///     println!("F.3d belongs to reporter: {}", reporter_name);
+/// }
+///
+/// // Check multiple editions
+/// for edition in ["A.2d", "F.3d", "S.Ct."] {
+///     if let Some(reporter) = editions.get(edition) {
+///         println!("{} -> {}", edition, reporter);
+///     }
+/// }
+/// ```
 pub fn get_editions() -> &'static HashMap<String, String> {
   utils::get_editions_mapping()
 }
 
-/// Get names to editions mapping (maps reporter names to their edition abbreviations)
+/// Get names to editions mapping that maps reporter names to their edition abbreviations.
 ///
-/// Equivalent to Python's NAMES_TO_EDITIONS
+/// This provides a lookup from full reporter names to all their edition abbreviations.
+///
+/// # Examples
+///
+/// ```rust
+/// use reporters_db::get_names_to_editions;
+///
+/// let names_to_editions = get_names_to_editions();
+///
+/// // Look up all editions for Atlantic Reporter
+/// if let Some(editions) = names_to_editions.get("Atlantic Reporter") {
+///     println!("Atlantic Reporter editions: {:?}", editions);
+///     // Might print: ["A.", "A.2d", "A.3d"]
+/// }
+///
+/// // Browse first few reporters
+/// for (name, editions) in names_to_editions.iter().take(3) {
+///     println!("{}: {:?}", name, editions);
+/// }
+/// ```
 pub fn get_names_to_editions() -> &'static HashMap<String, Vec<String>> {
   utils::get_names_to_editions()
 }
 
-/// Get formats mapping (maps edition keys to their cite formats)
+/// Get special formats mapping for non-standard citation formats.
 ///
-/// Equivalent to Python's SPECIAL_FORMATS
+/// This provides specialized formatting rules for reporters that don't follow
+/// standard citation patterns.
+///
+/// # Examples
+///
+/// ```rust
+/// use reporters_db::get_special_formats;
+///
+/// let formats = get_special_formats();
+///
+/// // Check if there are special formatting rules
+/// for (edition, format) in formats.iter().take(5) {
+///     println!("Special format for {}: {}", edition, format);
+/// }
+/// ```
 pub fn get_special_formats() -> &'static HashMap<String, String> {
   utils::get_formats_mapping()
 }
 
 #[cfg(test)]
 mod tests {
-  use super::*;
+  use super::{
+    get_case_name_abbreviations, get_editions, get_journals, get_laws, get_names_to_editions,
+    get_regex_variables, get_reporters, get_special_formats, get_state_abbreviations,
+    get_variations_only,
+  };
   use std::collections::HashSet;
 
   #[test]

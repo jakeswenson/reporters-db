@@ -22,7 +22,7 @@ impl StateName {
 
 // Function to return the static STATE_ABBREVIATIONS map
 pub fn state_abbreviations() -> &'static StateAbbreviationMap {
-  &crate::reporters::STATE_ABBREVIATIONS
+  &crate::generated::STATE_ABBREVIATIONS
 }
 
 #[cfg(test)]

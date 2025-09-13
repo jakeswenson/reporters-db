@@ -22,7 +22,7 @@ impl CaseNamePart {
 
 // Function to return the static CASE_NAME_ABBREVIATIONS map
 pub fn case_name_part_abbreviations() -> &'static CaseNamePartAbbreviationMap {
-  &crate::reporters::CASE_NAME_ABBREVIATIONS
+  &crate::generated::CASE_NAME_ABBREVIATIONS
 }
 
 #[cfg(test)]

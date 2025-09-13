@@ -1,33 +1,36 @@
 [package]
 name = "reporters-db"
 version = "0.0.5"
-edition = "2021"
+edition = "2024"
 license-file = "LICENSE"
 description = "An unoffical port of the freelawproject's database of court reporters."
 readme = "README.rst"
 repository = "https://github.com/jakeswenson/reporters-db"
 
+[lib]
+path = "src/lib.rs"
+
 [dependencies]
-serde = { version = "1", features = ["serde_derive"] }
-chrono = { version = "0.4", features = ["serde"] }
-regex = "1"
-thiserror = "1"
-phf = { version = "0.11", features = ["macros"] }
-serde_json = "1"
+serde = { version = "1.0.219", features = ["serde_derive"] }
+chrono = { version = "0.4.42", features = ["serde"] }
+regex = "1.11.2"
+thiserror = "1.0.69"
+phf = { version = "0.13.1", features = ["macros"] }
+serde_json = "1.0.143"
 
 [dev-dependencies]
-jsonschema = "0.18"
-tempfile = "3.10"
-pretty_assertions = "1.4"
-rstest = "0.21"
+jsonschema = "0.33.0"
+tempfile = "3.22.0"
+pretty_assertions = "1.4.1"
+rstest = "0.26.1"
 
 [dev-dependencies.cargo-husky]
-version = "1"
+version = "1.5.0"
 default-features = false # Disable features which are enabled by default
 features = ["precommit-hook", "prepush-hook", "run-cargo-test", "run-cargo-clippy", "run-cargo-fmt"]
 
 
 [build-dependencies]
-phf_codegen = "0.11"
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
+phf_codegen = "0.13.1"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.143"

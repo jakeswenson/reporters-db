@@ -2,9 +2,7 @@
 ///
 /// This module contains comprehensive validation logic that mirrors
 /// the Python test suite, ensuring data integrity and consistency.
-use crate::*;
 use regex::Regex;
-use std::collections::HashSet;
 
 /// Valid cite types as defined in Python test suite
 static VALID_CITE_TYPES: &[&str] = &[
@@ -86,7 +84,11 @@ pub fn check_dates(
 
 #[cfg(test)]
 mod tests {
-  use super::*;
+  use super::{VALID_CITE_TYPES, check_ascii, check_dates, check_whitespace};
+  use crate::{
+    get_editions, get_names_to_editions, get_regex_variables, get_reporters, get_variations_only,
+  };
+  use std::collections::HashSet;
 
   #[test]
   fn test_any_keys_missing_editions() {

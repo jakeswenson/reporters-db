@@ -1,5 +1,5 @@
-// Re-use the Journal type from generated code
-pub use crate::reporters::Journal;
+// Re-use the Journal type from generated code (uses static references for zero-copy access)
+pub use crate::generated::Journal;
 
 // Type alias for compatibility
 pub type JournalsMap = phf::Map<&'static str, &'static [Journal]>;
@@ -29,7 +29,7 @@ impl JournalName {
 
 // Function to return the static JOURNALS map
 pub fn journals() -> &'static JournalsMap {
-  &crate::reporters::JOURNALS
+  &crate::generated::JOURNALS
 }
 
 #[cfg(test)]

@@ -1,5 +1,5 @@
-// Re-use the Law type from generated code
-pub use crate::reporters::Law;
+// Re-use the Law type from generated code (uses static references for zero-copy access)
+pub use crate::generated::Law;
 
 // Type alias for compatibility
 pub type LawsMap = phf::Map<&'static str, &'static [Law]>;
@@ -38,7 +38,7 @@ impl Jurisdiction {
 
 // Function to return the static LAWS map
 pub fn laws() -> &'static LawsMap {
-  &crate::reporters::LAWS
+  &crate::generated::LAWS
 }
 
 #[cfg(test)]

@@ -1,3 +1,10 @@
+//! Utility functions for processing and accessing reporter database information.
+//!
+//! This module provides convenience functions that create specialized views
+//! of the reporter data, such as variation mappings, edition lookups, and
+//! name-to-edition mappings. All data is computed lazily and cached for
+//! optimal performance.
+
 use crate::regexes::{RawRegexMap, RegexOrNested, RegexTemplate};
 use crate::reporters::reporters;
 use regex::Regex;

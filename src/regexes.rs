@@ -1,3 +1,22 @@
+//! Regular expression templates for citation pattern matching.
+//!
+//! This module provides regex templates that can be used to parse legal citations.
+//! The templates support variable substitution and can be resolved to create concrete
+//! regular expressions for different citation formats.
+//!
+//! # Examples
+//!
+//! ```rust
+//! use reporters_db::regexes::{RegexTemplate, regexes};
+//!
+//! // Get processed regex variables
+//! let regex_vars = regexes();
+//!
+//! if let Some(template) = regex_vars.get("full_cite") {
+//!     println!("Full cite template: {}", template.value());
+//! }
+//! ```
+
 pub use chrono::NaiveDateTime;
 use regex::Captures;
 use serde::Deserialize;
@@ -100,9 +119,44 @@ impl RegexOrNested {
   }
 }
 
+// Use the generated PHF data
+use crate::generated::RAW_REGEXES;
+
 pub fn raw_regexes() -> RawRegexMap {
-  let json = include_str!("../reporters_db/data/regexes.json");
-  serde_json::from_str(json).expect("Parsing regexes.json should not fail...")
+  // Reconstruct the nested structure from the flattened PHF map
+  let mut result = RawRegexMap::new();
+
+  for (key, value) in RAW_REGEXES.entries() {
+    insert_nested_value(&mut result, key, RegexTemplate::of(*value));
+  }
+
+  result
+}
+
+fn insert_nested_value(
+  map: &mut RawRegexMap,
+  key: &str,
+  value: RegexTemplate,
+) {
+  let parts: Vec<&str> = key.split('.').collect();
+  if parts.is_empty() {
+    return;
+  }
+
+  if parts.len() == 1 {
+    map.insert(parts[0].to_string(), RegexOrNested::Regex(value));
+  } else {
+    let first_part = parts[0];
+    let remaining_key = parts[1..].join(".");
+
+    let entry = map
+      .entry(first_part.to_string())
+      .or_insert_with(|| RegexOrNested::Nested(RawRegexMap::new()));
+
+    if let RegexOrNested::Nested(nested_map) = entry {
+      insert_nested_value(nested_map, &remaining_key, value);
+    }
+  }
 }
 
 pub fn regexes() -> HashMap<String, RegexTemplate> {
