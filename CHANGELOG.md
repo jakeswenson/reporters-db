@@ -9,6 +9,10 @@ This is the changelog for the Rust port of the reporters-db library. This port m
 
 ## [Unreleased]
 
+### Added
+- Automatic README.md version updates during release process via cargo-release
+- Pre-release replacement configuration to keep documentation in sync with published version
+
 ## [0.1.4] - 2025-09-13
 
 ### Infrastructure

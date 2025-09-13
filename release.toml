@@ -25,4 +25,9 @@ replace = """
 [{{version}}]: https://github.com/jakeswenson/reporters-db/compare/v{{prev_version}}...v{{version}}"""
 exactly = 1
 
+[[pre-release-replacements]]
+file = "README.md"
+search = 'reporters-db = "\d+\.\d+\.\d+"'
+replace = 'reporters-db = "{{version}}"'
+
 
